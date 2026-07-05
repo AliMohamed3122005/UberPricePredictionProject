@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from featuring import add_distance_feature, add_rush_hour_feature, extract_datetime_features, add_weekend_feature,add_rush_hour_feature
 from  visulization import plot_all_preprocessing_visuals
+from pathlib import Path
 
 #ExPLORING_DATA
 
@@ -112,3 +113,16 @@ data = np.array(df)
 
 
 plot_all_preprocessing_visuals(df)
+
+
+
+
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+
+output_path = BASE_DIR / "Data" / "processed" / "uber_processed.csv"
+output_path.parent.mkdir(parents=True, exist_ok=True)
+
+df.to_csv(output_path, index=False)
+
+print("Processed data saved successfully at:", output_path)
