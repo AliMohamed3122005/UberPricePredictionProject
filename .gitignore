@@ -221,3 +221,4 @@ __marimo__/
 Preprocessing/uber.csv
 __pycache__/
 *.pyc
+Model/artifacts/
