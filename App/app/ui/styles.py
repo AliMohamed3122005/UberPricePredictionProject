@@ -1,4 +1,5 @@
 """Global Uber-inspired styling for the Streamlit app."""
+
 import streamlit as st
 
 from config import THEME
@@ -6,13 +7,21 @@ from config import THEME
 
 def inject_global_styles() -> None:
     t = THEME
+
     st.markdown(
         f"""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url(
+            'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
+        );
 
         html, body, [class*="css"] {{
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family:
+                'Inter',
+                -apple-system,
+                BlinkMacSystemFont,
+                'Segoe UI',
+                sans-serif;
         }}
 
         .stApp {{
@@ -24,7 +33,9 @@ def inject_global_styles() -> None:
             background: transparent;
         }}
 
-        #MainMenu, footer, .stDeployButton {{
+        #MainMenu,
+        footer,
+        .stDeployButton {{
             visibility: hidden;
         }}
 
@@ -34,13 +45,24 @@ def inject_global_styles() -> None:
             max-width: 1400px;
         }}
 
-        h1, h2, h3, h4, h5, h6, p, label, span {{
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        label,
+        span {{
             color: {t.text_primary};
         }}
 
-        .stCaption, small {{
+        .stCaption,
+        small {{
             color: {t.text_secondary} !important;
         }}
+
+        /* Tabs */
 
         div[data-testid="stTabs"] button {{
             background: transparent;
@@ -63,6 +85,8 @@ def inject_global_styles() -> None:
             background: {t.surface_alt};
         }}
 
+        /* Buttons */
+
         .stButton > button {{
             border-radius: 8px;
             font-weight: 600;
@@ -73,13 +97,40 @@ def inject_global_styles() -> None:
 
         .stButton > button[kind="primary"] {{
             background-color: {t.accent};
-            color: {t.accent_dark};
+            color: {t.accent_dark} !important;
             border: none;
+        }}
+
+        .stButton > button[kind="primary"] p,
+        .stButton > button[kind="primary"] span,
+        .stButton > button[kind="primary"] div {{
+            color: {t.accent_dark} !important;
         }}
 
         .stButton > button[kind="primary"]:hover {{
             background-color: #E8E8E8;
-            color: {t.accent_dark};
+            color: {t.accent_dark} !important;
+        }}
+
+        .stButton > button[kind="primary"]:hover p,
+        .stButton > button[kind="primary"]:hover span,
+        .stButton > button[kind="primary"]:hover div {{
+            color: {t.accent_dark} !important;
+        }}
+
+        .stButton > button[kind="primary"]:focus,
+        .stButton > button[kind="primary"]:active {{
+            background-color: #DADADA;
+            color: {t.accent_dark} !important;
+        }}
+
+        .stButton > button[kind="primary"]:focus p,
+        .stButton > button[kind="primary"]:focus span,
+        .stButton > button[kind="primary"]:focus div,
+        .stButton > button[kind="primary"]:active p,
+        .stButton > button[kind="primary"]:active span,
+        .stButton > button[kind="primary"]:active div {{
+            color: {t.accent_dark} !important;
         }}
 
         .stButton > button[kind="secondary"] {{
@@ -88,22 +139,41 @@ def inject_global_styles() -> None:
             border: 1px solid {t.border};
         }}
 
+        .stButton > button[kind="secondary"] p,
+        .stButton > button[kind="secondary"] span,
+        .stButton > button[kind="secondary"] div {{
+            color: {t.text_primary} !important;
+        }}
+
         .stButton > button:disabled {{
             background-color: {t.surface_alt} !important;
             color: {t.text_muted} !important;
             border: 1px solid {t.border} !important;
         }}
 
-        div[data-baseweb="input"], div[data-baseweb="select"] {{
+        .stButton > button:disabled p,
+        .stButton > button:disabled span,
+        .stButton > button:disabled div {{
+            color: {t.text_muted} !important;
+        }}
+
+        /* Inputs */
+
+        div[data-baseweb="input"],
+        div[data-baseweb="select"] {{
             background-color: {t.surface_alt};
             border-color: {t.border};
         }}
 
-        .stNumberInput input, .stDateInput input, .stTimeInput input {{
+        .stNumberInput input,
+        .stDateInput input,
+        .stTimeInput input {{
             background-color: {t.surface_alt} !important;
             color: {t.text_primary} !important;
             border-color: {t.border} !important;
         }}
+
+        /* Metrics and dataframes */
 
         div[data-testid="stMetric"] {{
             background-color: {t.surface};
@@ -117,6 +187,8 @@ def inject_global_styles() -> None:
             border-radius: 12px;
             overflow: hidden;
         }}
+
+        /* Header */
 
         .app-header {{
             display: flex;
@@ -142,6 +214,8 @@ def inject_global_styles() -> None:
             letter-spacing: 0.08em;
         }}
 
+        /* Panel titles */
+
         .panel-title {{
             font-size: 0.75rem;
             font-weight: 600;
@@ -150,6 +224,8 @@ def inject_global_styles() -> None:
             color: {t.text_muted};
             margin: 0 0 0.75rem 0;
         }}
+
+        /* Location information */
 
         .location-row {{
             display: flex;
@@ -200,6 +276,8 @@ def inject_global_styles() -> None:
             height: 12px;
         }}
 
+        /* Ride cards */
+
         .ride-card {{
             display: flex;
             align-items: center;
@@ -210,7 +288,9 @@ def inject_global_styles() -> None:
             background: {t.surface};
             margin-bottom: 0.5rem;
             cursor: pointer;
-            transition: border-color 0.15s ease, background 0.15s ease;
+            transition:
+                border-color 0.15s ease,
+                background 0.15s ease;
         }}
 
         .ride-card.selected {{
@@ -240,6 +320,8 @@ def inject_global_styles() -> None:
             white-space: nowrap;
         }}
 
+        /* Fare result */
+
         .fare-panel {{
             background: {t.surface};
             border: 1px solid {t.border};
@@ -268,6 +350,8 @@ def inject_global_styles() -> None:
             margin-top: 0.5rem;
         }}
 
+        /* Surge */
+
         .surge-banner {{
             display: flex;
             align-items: center;
@@ -290,6 +374,8 @@ def inject_global_styles() -> None:
             flex-shrink: 0;
         }}
 
+        /* Empty state */
+
         .empty-state {{
             text-align: center;
             padding: 2rem 1rem;
@@ -305,6 +391,8 @@ def inject_global_styles() -> None:
             color: {t.text_secondary};
             padding: 0.5rem 0 0.75rem 0;
         }}
+
+        /* Statistics */
 
         .stat-card {{
             background: {t.surface};
@@ -340,11 +428,15 @@ def inject_global_styles() -> None:
             margin-top: 1rem;
         }}
 
+        /* Bordered containers */
+
         div[data-testid="stVerticalBlockBorderWrapper"] {{
             border-color: {t.border};
             background: {t.surface};
             border-radius: 12px;
         }}
+
+        /* Radio ride selector */
 
         div[data-testid="stRadio"] > div {{
             gap: 0.5rem;
@@ -356,7 +448,9 @@ def inject_global_styles() -> None:
             border-radius: 10px;
             padding: 0.85rem 1rem !important;
             font-weight: 500;
-            transition: border-color 0.15s ease, background 0.15s ease;
+            transition:
+                border-color 0.15s ease,
+                background 0.15s ease;
         }}
 
         div[data-testid="stRadio"] label:hover {{
