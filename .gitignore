@@ -222,3 +222,4 @@ Preprocessing/uber.csv
 __pycache__/
 *.pyc
 Model/artifacts/
+*.db

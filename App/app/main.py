@@ -1,11 +1,20 @@
 """Entry point: `streamlit run app/main.py`"""
+
 import logging
 import sys
 from pathlib import Path
 
 import streamlit as st
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+# Make App/app modules and Model classes visible to Python.
+APP_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+MODEL_CODE_DIR = PROJECT_ROOT / "Model"
+
+sys.path.insert(0, str(APP_DIR))
+sys.path.insert(0, str(MODEL_CODE_DIR))
+
 
 from config import APP_TITLE, DB_PATH, DEFAULT_MODEL_ARTIFACT, LOG_FORMAT  # noqa: E402
 from core.eta import estimate_minutes  # noqa: E402
@@ -20,6 +29,7 @@ from ui.model_comparison import render_model_comparison  # noqa: E402
 from ui.results import render_results  # noqa: E402
 from ui.sidebar import render_trip_panel  # noqa: E402
 from ui.styles import inject_global_styles, render_header  # noqa: E402
+
 
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
@@ -51,10 +61,11 @@ def render_predict_tab(predictor, repository) -> None:
         if predictor is None:
             st.warning(
                 "No trained model found yet. Drop a `.joblib` artifact into "
-                f"`Model/artifacts/` to enable fare predictions."
+                "`Model/artifacts/` to enable fare predictions."
             )
 
         ready = pickup is not None and dropoff is not None
+
         get_estimate = st.button(
             "See prices",
             type="primary",
@@ -67,51 +78,83 @@ def render_predict_tab(predictor, repository) -> None:
 
         if get_estimate and ready and predictor is not None:
             trip = TripRequest(
-                pickup_lat=pickup[0], pickup_lon=pickup[1],
-                dropoff_lat=dropoff[0], dropoff_lon=dropoff[1],
+                pickup_lat=pickup[0],
+                pickup_lon=pickup[1],
+                dropoff_lat=dropoff[0],
+                dropoff_lon=dropoff[1],
                 passenger_count=panel_values["passenger_count"],
                 pickup_datetime=panel_values["pickup_datetime"],
             )
+
             features = TripFeatureBuilder().build(trip)
             prediction = predictor.predict(features)
 
             is_rush_hour = bool(features["is_rush_hour"].iloc[0])
             ride_type = panel_values["ride_type"]
-            quote = quote_price(prediction, ride_type, is_rush_hour)
-            eta_minutes = estimate_minutes(
-                float(features["dist_travel_km"].iloc[0]), is_rush_hour,
+
+            quote = quote_price(
+                prediction,
+                ride_type,
+                is_rush_hour,
             )
 
-            repository.save(PredictionRecord(
-                pickup_lat=trip.pickup_lat, pickup_lon=trip.pickup_lon,
-                dropoff_lat=trip.dropoff_lat, dropoff_lon=trip.dropoff_lon,
-                pickup_datetime=trip.pickup_datetime.isoformat(),
-                passenger_count=trip.passenger_count, ride_type=ride_type.key,
-                dist_travel_km=float(features["dist_travel_km"].iloc[0]),
-                is_weekend=int(features["is_weekend"].iloc[0]),
-                is_rush_hour=int(is_rush_hour),
-                model_name=quote.model_name, predicted_fare=quote.final_fare,
-            ))
+            eta_minutes = estimate_minutes(
+                float(features["dist_travel_km"].iloc[0]),
+                is_rush_hour,
+            )
+
+            repository.save(
+                PredictionRecord(
+                    pickup_lat=trip.pickup_lat,
+                    pickup_lon=trip.pickup_lon,
+                    dropoff_lat=trip.dropoff_lat,
+                    dropoff_lon=trip.dropoff_lon,
+                    pickup_datetime=trip.pickup_datetime.isoformat(),
+                    passenger_count=trip.passenger_count,
+                    ride_type=ride_type.key,
+                    dist_travel_km=float(
+                        features["dist_travel_km"].iloc[0]
+                    ),
+                    is_weekend=int(
+                        features["is_weekend"].iloc[0]
+                    ),
+                    is_rush_hour=int(is_rush_hour),
+                    model_name=quote.model_name,
+                    predicted_fare=quote.final_fare,
+                )
+            )
+
         elif get_estimate and predictor is None:
-            st.error("Cannot estimate fare — no trained model artifact available.")
+            st.error(
+                "Cannot estimate fare — no trained model artifact available."
+            )
 
         render_results(quote, eta_minutes)
 
 
 def main() -> None:
-    st.set_page_config(page_title=APP_TITLE, layout="wide", initial_sidebar_state="collapsed")
+    st.set_page_config(
+        page_title=APP_TITLE,
+        layout="wide",
+        initial_sidebar_state="collapsed",
+    )
+
     inject_global_styles()
     render_header()
 
     repository = get_repository()
     predictor = get_predictor()
 
-    tab_predict, tab_history, tab_models = st.tabs(["Plan trip", "Trip history", "Models"])
+    tab_predict, tab_history, tab_models = st.tabs(
+        ["Plan trip", "Trip history", "Models"]
+    )
 
     with tab_predict:
         render_predict_tab(predictor, repository)
+
     with tab_history:
         render_history(repository)
+
     with tab_models:
         render_model_comparison()
 

@@ -12,11 +12,13 @@ from pathlib import Path
 # Paths
 # ──────────────────────────────────────────────
 
-BASE_DIR = Path(__file__).resolve().parents[1]          # uber-fare-app/
-MODEL_DIR = BASE_DIR / "Model" / "artifacts"
+BASE_DIR = Path(__file__).resolve().parents[1]
+
+MODEL_DIR = BASE_DIR / "model" / "Model"
+
 DB_PATH = BASE_DIR / "app" / "db" / "predictions.db"
 
-DEFAULT_MODEL_ARTIFACT = MODEL_DIR / "random_forest_regression.joblib"
+DEFAULT_MODEL_ARTIFACT = MODEL_DIR / "gradient_boosting.joblib"
 
 AVAILABLE_MODEL_ARTIFACTS: dict[str, str] = {
     "Random Forest": "random_forest_regression.joblib",
