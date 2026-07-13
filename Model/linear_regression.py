@@ -1,3 +1,5 @@
+#edited
+
 import logging
 from dataclasses import dataclass, field
 
@@ -25,8 +27,10 @@ class LinearRegressionModel(CoefficientRegressor):
         self._model = SklearnLR(fit_intercept=self.fit_intercept)
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> "LinearRegressionModel":
-        logger.info("LinearRegressionModel: fitting on %d samples, %d features",
-                    X.shape[0], X.shape[1])
+        logger.info(
+            "LinearRegressionModel: fitting on %d samples, %d features",
+            X.shape[0], X.shape[1]
+        )
         self._model.fit(X, y)
         return self
 
@@ -46,26 +50,36 @@ class LinearRegressionModel(CoefficientRegressor):
 class RidgeRegressionModel(CoefficientRegressor):
     """Ridge regression with optional fixed alpha or CV-tuned alpha."""
 
-    alpha: float | None = None
+    fixed_alpha: float | None = None
     fit_intercept: bool = True
     alphas: np.ndarray = field(default_factory=lambda: DEFAULT_ALPHAS.copy())
     _model: SklearnRidge | SklearnRidgeCV = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
-        if self.alpha is None:
+        if self.fixed_alpha is None:
             self._model = SklearnRidgeCV(
                 alphas=self.alphas,
                 fit_intercept=self.fit_intercept,
             )
         else:
-            self._model = SklearnRidge(alpha=self.alpha, fit_intercept=self.fit_intercept)
+            self._model = SklearnRidge(
+                alpha=self.fixed_alpha,
+                fit_intercept=self.fit_intercept,
+            )
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> "RidgeRegressionModel":
-        logger.info("RidgeRegressionModel: fitting on %d samples, %d features",
-                    X.shape[0], X.shape[1])
+        logger.info(
+            "RidgeRegressionModel: fitting on %d samples, %d features",
+            X.shape[0], X.shape[1]
+        )
         self._model.fit(X, y)
-        if self.alpha is None:
-            logger.info("RidgeRegressionModel: best alpha=%.6f", self._model.alpha_)
+
+        if self.fixed_alpha is None:
+            logger.info(
+                "RidgeRegressionModel: best alpha=%.6f",
+                self._model.alpha_,
+            )
+
         return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
@@ -84,14 +98,14 @@ class RidgeRegressionModel(CoefficientRegressor):
 class LassoRegressionModel(CoefficientRegressor):
     """Lasso regression with optional fixed alpha or CV-tuned alpha."""
 
-    alpha: float | None = None
+    fixed_alpha: float | None = None
     fit_intercept: bool = True
     alphas: np.ndarray = field(default_factory=lambda: DEFAULT_ALPHAS.copy())
     max_iter: int = 5000
     _model: SklearnLasso | SklearnLassoCV = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
-        if self.alpha is None:
+        if self.fixed_alpha is None:
             self._model = SklearnLassoCV(
                 alphas=self.alphas,
                 fit_intercept=self.fit_intercept,
@@ -100,17 +114,24 @@ class LassoRegressionModel(CoefficientRegressor):
             )
         else:
             self._model = SklearnLasso(
-                alpha=self.alpha,
+                alpha=self.fixed_alpha,
                 fit_intercept=self.fit_intercept,
                 max_iter=self.max_iter,
             )
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> "LassoRegressionModel":
-        logger.info("LassoRegressionModel: fitting on %d samples, %d features",
-                    X.shape[0], X.shape[1])
+        logger.info(
+            "LassoRegressionModel: fitting on %d samples, %d features",
+            X.shape[0], X.shape[1]
+        )
         self._model.fit(X, y)
-        if self.alpha is None:
-            logger.info("LassoRegressionModel: best alpha=%.6f", self._model.alpha_)
+
+        if self.fixed_alpha is None:
+            logger.info(
+                "LassoRegressionModel: best alpha=%.6f",
+                self._model.alpha_,
+            )
+
         return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
