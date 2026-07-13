@@ -421,7 +421,7 @@ if __name__ == "__main__":
     )
 
     BASE_DIR = Path(__file__).resolve().parents[1]
-    input_file = BASE_DIR / "Data" / "uber.csv"
+    input_file = BASE_DIR / "Preprocessing" / "uber.csv"
     output_file = BASE_DIR / "Data" / "processed" / "uber_processed.csv"
 
     # --- Wire up components (composition root) ---
@@ -478,10 +478,13 @@ if __name__ == "__main__":
         FareVsDistancePlot(),
         TripsByHourPlot(),
         AvgFareByHourPlot(),
-        NumericFeatureHistograms(),
         CorrelationHeatmapPlot(),
     ]
-    visualizer = Visualizer(steps=plot_steps)
+    visualizer = Visualizer(
+    steps=plot_steps,
+    n_cols=2,
+    plots_per_figure=4,
+)
 
     # Pipeline depends ONLY on abstractions — concrete wiring happens here.
     pipeline = PreprocessingPipeline(

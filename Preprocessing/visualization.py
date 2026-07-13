@@ -247,45 +247,102 @@ class CorrelationHeatmapPlot(PlotStep):
 # ──────────────────────────────────────────────
 
 class Visualizer(BaseVisualizer):
-    """Renders all PlotStep objects in a single figure grid.
+    """Renders PlotStep objects across multiple readable figures."""
 
-    Plots are arranged in a grid with `n_cols` columns. Only steps
-    whose required columns exist in the DataFrame are rendered.
-    One call to plt.show() at the end displays everything at once.
-    """
-
-    def __init__(self, steps: list[PlotStep], n_cols: int = 3):
+    def __init__(
+        self,
+        steps: list[PlotStep],
+        n_cols: int = 2,
+        plots_per_figure: int = 4,
+    ):
         self.steps = steps
         self.n_cols = n_cols
+        self.plots_per_figure = plots_per_figure
 
     def run(self, df: pd.DataFrame) -> None:
-        # Filter to only plottable steps
-        plottable = [s for s in self.steps if s.can_plot(df)]
-        n = len(plottable)
+        
+        plottable = [
+            step for step in self.steps
+            if step.can_plot(df)
+        ]
 
-        if n == 0:
-            logger.warning("Visualizer: no plottable steps, skipping")
+        total_plots = len(plottable)
+
+        if total_plots == 0:
+            logger.warning(
+                "Visualizer: no plottable steps, skipping"
+            )
             return
 
-        logger.info("Visualizer: rendering %d plots in a single figure", n)
-
-        n_rows = math.ceil(n / self.n_cols)
         plt.style.use("dark_background")
-        fig, axes = plt.subplots(n_rows, self.n_cols, figsize=(8 * self.n_cols, 5 * n_rows))
 
-        # Flatten axes to a 1-D array for easy indexing (handles 1-row case)
-        if n_rows == 1 and self.n_cols == 1:
-            axes = [axes]
-        else:
+        total_pages = math.ceil(
+            total_plots / self.plots_per_figure
+        )
+
+        logger.info(
+            "Visualizer: rendering %d plots across %d figures",
+            total_plots,
+            total_pages,
+        )
+
+        
+        for page_index in range(total_pages):
+            start = page_index * self.plots_per_figure
+            end = start + self.plots_per_figure
+
+            page_steps = plottable[start:end]
+            page_plot_count = len(page_steps)
+
+            n_rows = math.ceil(
+                page_plot_count / self.n_cols
+            )
+
+            fig, axes = plt.subplots(
+                nrows=n_rows,
+                ncols=self.n_cols,
+                figsize=(16, 10),
+                squeeze=False,
+                constrained_layout=True,
+            )
+
             axes = axes.flatten()
 
-        for i, step in enumerate(plottable):
-            step.plot(df, axes[i])
+            
+            for index, step in enumerate(page_steps):
+                current_axis = axes[index]
 
-        # Hide any unused subplot slots
-        for j in range(n, len(axes)):
-            axes[j].set_visible(False)
+                step.plot(df, current_axis)
 
-        fig.tight_layout()
+                current_axis.set_title(
+                    current_axis.get_title(),
+                    fontsize=15,
+                    pad=12
+                )
+                current_axis.xaxis.label.set_size(11)
+                current_axis.yaxis.label.set_size(11)
+
+                current_axis.tick_params(
+                    axis="both",
+                    labelsize=9,
+                )
+
+                current_axis.grid(
+                    alpha=0.2,
+                )
+
+            
+            for index in range(page_plot_count, len(axes)):
+                axes[index].remove()
+
+            fig.suptitle(
+                f"Uber Data Visualization "
+                f"({page_index + 1}/{total_pages})",
+                fontsize=20,
+                fontweight="bold",
+            )
+
+        
         plt.show()
+
         logger.info("Visualizer: finished")
