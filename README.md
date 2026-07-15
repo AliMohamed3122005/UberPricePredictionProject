@@ -36,9 +36,6 @@ Scikit learn is the library the model itself is built with, and it's also where 
 
 The model file currently loaded has a scaling bug from training, so predictions from it should not be trusted as final numbers yet, that's being fixed by the teammate who owns the training pipeline. The route between pickup and dropoff is currently drawn as a straight line rather than a real routed path, since adding a routing API was lower priority than getting the prediction pipeline correct first.
 
-## Who built it
-
-The Streamlit application, meaning everything you interact with, the map, the interface, the database, and how it all connects to the trained model, was built by Muhamed Abdelmaboud as part of an IEEE SSCS AI team project. The rest of the team handled data cleaning and model training.
 
 ## Running it yourself
 
