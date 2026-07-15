@@ -6,17 +6,17 @@ Live demo: https://gallows-bacterium-scarce.ngrok-free.dev/
 
 ## What it does
 
-You open the app and see a map. You click once to set your pickup point and click again to set where you're going. Then you choose how many people are riding with you and what type of ride you want (UberX, Comfort, or UberXL). Hit "Get fare estimate" and the app gives you a price, a time estimate, and tells you if it's rush hour so you know why the price might be a bit higher.
+You open the app and see a map. You click once to set your pickup point and click again to set where you're going. Then you choose how many people are riding with you and what type of ride you want (UberX, Comfort, or UberXL). Hit "Get fare estimate" and the app gives you a price, a time estimate and tells you if it's rush hour so you know why the price might be a bit higher.
 
-Every prediction you make gets saved, so there's a History tab where you can scroll back and see all your past trips. There's also a Model Comparison tab that shows how different machine learning models performed against each other, so you can see the actual numbers behind the predictions instead of just trusting a black box.
+Every prediction you make gets saved so there's a History tab where you can scroll back and see all your past trips. There's also a Model Comparison tab that shows how different machine learning models performed against each other so you can see the actual numbers behind the predictions instead of just trusting a black box.
 
 ## How the price gets calculated
 
-Behind the scenes the app takes your pickup and dropoff points and works out the real distance between them, what direction you're heading, how far you are from the city center, and whether you picked a busy time of day. All of that gets fed into a machine learning model that was trained on real Uber trip data, and the model gives back a base price. From there the app adjusts the price depending on the ride type you picked and adds a bit extra if it's rush hour.
+Behind the scenes the app takes your pickup and dropoff points and works out the real distance between them, what direction you're heading, how far you are from the city center and whether you picked a busy time of day. All of that gets fed into a machine learning model that was trained on real Uber trip data and the model gives back a base price. From there the app adjusts the price depending on the ride type you picked and adds a bit extra if it's rush hour.
 
 ## Built with
 
-**Streamlit** runs the whole app. It's a Python framework that turns a normal script into a web app without needing to write any HTML or JavaScript, which made sense here since the whole team already knew Python and the focus was on the machine learning, not building a frontend from scratch.
+**Streamlit** runs the whole app. It's a Python framework that turns a normal script into a web app without needing to write any HTML or JavaScript which made sense here since the whole team already knew Python and the focus was on the machine learning not building a frontend from scratch.
 
 **Folium** handles the interactive map. It's a Python wrapper around Leaflet.js, so you get a real clickable map with markers and lines just by writing Python. There's a companion package called streamlit-folium that makes folium maps talk back to Streamlit, so when you click on the map, that click actually reaches the Python code.
 
